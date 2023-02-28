@@ -8,11 +8,17 @@ import cucumber.api.java.en.When;
 import io.cucumber.datatable.DataTable;
 import javafx.scene.control.Tab;
 import org.junit.Assert;
+import org.openqa.selenium.NotFoundException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import pages.SmartBearBasePage;
 import utils.Driver;
+import utils.DropdownHandler;
 import utils.TableHandler;
+import utils.Waiter;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class SmartBearSteps {
 
@@ -50,7 +56,7 @@ public class SmartBearSteps {
 
     @Then("user should see {string} message")
     public void user_should_see_message(String string) {
-        Assert.assertEquals(string, smartBearBasePage.invalidLoginMessage.getText())
+        Assert.assertEquals(string, smartBearBasePage.invalidLoginMessage.getText());
     }
 
     @Then("user should be routed to {string}")
@@ -85,39 +91,82 @@ public class SmartBearSteps {
     }
 
     @When("user clicks on {string} menu item")
-    public void userClicksOnMenuItem(String arg0) {
-
+    public void userClicksOnMenuItem(String string) {
+        switch (string) {
+            case "Order":
+                smartBearBasePage.menuItemsList.get(2).click();
+                break;
+            case "View all orders":
+                smartBearBasePage.menuItemsList.get(0).click();
+                break;
+            default:
+                throw new NotFoundException();
+        }
     }
 
     @And("user selects {string} as product")
-    public void userSelectsAsProduct(String arg0) {
+    public void userSelectsAsProduct(String string) {
+        DropdownHandler.clickOnDropdownOption(smartBearBasePage.productDropdown
+                ,smartBearBasePage.productDropdownOptions, string);
     }
-
     @And("user enters {int} as quantity")
-    public void userEntersAsQuantity(int arg0) {
+    public void userEntersAsQuantity(int num) {
+        smartBearBasePage.productQuantityInput.sendKeys(String.valueOf(num));
     }
 
     @And("user enters all address information")
     public void userEntersAllAddressInformation() {
-    }
+        smartBearBasePage.customerNameInput.sendKeys("John Doe");
+        smartBearBasePage.customerStreetInput.sendKeys("123 Main st");
+        smartBearBasePage.customerCityInput.sendKeys("Chicago");
+        smartBearBasePage.customerStateInput.sendKeys("IL");
+        smartBearBasePage.customerZipCodeInput.sendKeys("60451");
+        }
 
     @And("user enters all payment information")
     public void userEntersAllPaymentInformation() {
+        smartBearBasePage.masterCard.click();
+        smartBearBasePage.customerCardExpInput.sendKeys("12/24");
+        smartBearBasePage.customerCardNumberInput.sendKeys("123456789");
     }
 
     @Then("user should see their order displayed in the {string} table")
-    public void userShouldSeeTheirOrderDisplayedInTheTable(String arg0) {
+    public void userShouldSeeTheirOrderDisplayedInTheTable(String string) {
+        Assert.assertTrue(smartBearBasePage.subHeading.isDisplayed());
+        Assert.assertEquals(string , smartBearBasePage.subHeading.getText());
+        Assert.assertEquals("John Doe", TableHandler.getCell(table, 1, 1).getText());
     }
 
     @And("validate all information entered displayed correct with the order")
     public void validateAllInformationEnteredDisplayedCorrectWithTheOrder() {
+        Assert.assertEquals("John Doe", TableHandler.getCell(table, 1, 1).getText());
+
+        Assert.assertEquals("FamilyAlbum", TableHandler.getCell(table, 1, 2).getText());
+        Assert.assertEquals("2", TableHandler.getCell(table, 1, 3).getText());
+
+        Date date = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+        String today = formatter.format(date);
+        Assert.assertEquals(today, TableHandler.getCell(table, 1, 4).getText());
+
+        Assert.assertEquals("123 Main st", TableHandler.getCell(table, 1, 5).getText());
+        Assert.assertEquals("Chicago", TableHandler.getCell(table, 1, 6).getText());
+        Assert.assertEquals("IL", TableHandler.getCell(table, 1, 7).getText());
+        Assert.assertEquals("60451", TableHandler.getCell(table, 1, 8).getText());
+
+        Assert.assertEquals("MasterCard", TableHandler.getCell(table, 1, 9).getText());
+        Assert.assertEquals("123456789", TableHandler.getCell(table, 1, 10).getText());
+        Assert.assertEquals("12/24", TableHandler.getCell(table, 1, 11).getText());
     }
 
     @Then("validate all orders are deleted from the {string}")
-    public void validateAllOrdersAreDeletedFromThe(String arg0) {
+    public void validateAllOrdersAreDeletedFromThe(String string) {
+        Assert.assertTrue(smartBearBasePage.subHeading.isDisplayed());
+        Assert.assertEquals(string, smartBearBasePage.subHeading.getText());
     }
 
     @And("validate user sees {string} message")
-    public void validateUserSeesMessage(String arg0) {
+    public void validateUserSeesMessage(String string) {
+        Assert.assertEquals(string, smartBearBasePage.emptyOrderMessage.getText());
     }
 }

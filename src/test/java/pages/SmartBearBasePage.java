@@ -45,6 +45,9 @@ public class SmartBearBasePage {
     @FindBy(id = "ctl00_MainContent_fmwOrder_ddlProduct")
     public WebElement productDropdown;
 
+    @FindBy(css = "select[id*='ddlProduct']>option")
+    public List<WebElement> productDropdownOptions;
+
     @FindBy(id = "ctl00_MainContent_fmwOrder_txtQuantity")
     public WebElement productQuantityInput;
 
@@ -63,9 +66,6 @@ public class SmartBearBasePage {
     @FindBy(id = "ctl00_MainContent_fmwOrder_TextBox5")
     public WebElement customerZipCodeInput;
 
-    @FindBy(id = "ctl00_MainContent_fmwOrder_cardList")
-    public WebElement customerCardType;
-
     @FindBy(id = "ctl00_MainContent_fmwOrder_TextBox6")
     public WebElement customerCardNumberInput;
 
@@ -74,6 +74,9 @@ public class SmartBearBasePage {
 
     @FindBy(id = "ctl00_MainContent_fmwOrder_InsertButton")
     public WebElement btnSubmitOrder;
+
+    @FindBy(id = "ctl00_MainContent_fmwOrder_cardList_1")
+    public WebElement masterCard;
 
     @FindBy(tagName = "h2")
     public WebElement subHeading;
@@ -92,15 +95,6 @@ public class SmartBearBasePage {
             case "Process":
                 btnSubmitOrder.click();
                 break;
-        }
-    }
-
-    public void selectItemByVisibleText(String menuItem) {
-        for(WebElement item : menuItemsList) {
-            if(item.getText().equals(menuItem)) {
-                item.click();
-                break;
-            }
         }
     }
 }
