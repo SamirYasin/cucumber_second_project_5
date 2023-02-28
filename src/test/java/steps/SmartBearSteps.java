@@ -6,10 +6,13 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import io.cucumber.datatable.DataTable;
+import javafx.scene.control.Tab;
 import org.junit.Assert;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import pages.SmartBearBasePage;
 import utils.Driver;
+import utils.TableHandler;
 
 public class SmartBearSteps {
 
@@ -17,11 +20,13 @@ public class SmartBearSteps {
     WebDriver driver;
     SmartBearBasePage smartBearBasePage;
 
+    WebElement table;
+
     @Before
     public void setUp(){
         driver = Driver.getDriver();
         smartBearBasePage = new SmartBearBasePage();
-
+        table = smartBearBasePage.table;
     }
 
     @Given("user is on {string}")
@@ -56,23 +61,27 @@ public class SmartBearSteps {
     @Then("validate below menu items are displayed")
     public void validate_below_menu_items_are_displayed(DataTable dataTable) {
         for (int i = 0; i < dataTable.asList().size(); i++) {
-            Assert.assertEquals(dataTable.asList().get(i), smartBearBasePage.);
+            Assert.assertEquals(dataTable.asList().get(i), smartBearBasePage.menuItemsList.get(i).getText());
         }
 }
 
     @When("user clicks on {string} button")
-    public void userClicksOnButton(String arg0) {
-
+    public void userClicksOnButton(String string) {
+        smartBearBasePage.selectBtnByVisibleText(string);
     }
 
     @Then("all rows should be checked")
     public void allRowsShouldBeChecked() {
-
+        for(int i = 1; i < TableHandler.getRowCount(table); i++) {
+            Assert.assertTrue(TableHandler.getCheckbox(table, i, 0).isSelected());
+        }
     }
 
     @Then("all rows should be unchecked")
     public void allRowsShouldBeUnchecked() {
-
+        for (int i = 1; i < TableHandler.getRowCount(table); i++) {
+            Assert.assertFalse(TableHandler.getCheckbox(table, i, 0).isSelected());
+        }
     }
 
     @When("user clicks on {string} menu item")
